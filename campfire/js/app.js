@@ -4,6 +4,7 @@ var express = require('express');
 var Logger = require('./Logger');
 var RequestHandler = require('./request-handler');
 var cors = require('cors');
+var bodyParser = require('body-parser');
 
 function app() {
     this.run = function () {
@@ -40,6 +41,7 @@ function app() {
     this.createApp = function() {
         var expApp = express();
         expApp.use(cors());
+        expApp.use(bodyParser.json());
 
         return expApp;
     };
