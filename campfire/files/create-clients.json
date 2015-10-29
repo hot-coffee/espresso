@@ -1,0 +1,37 @@
+[
+  {
+    "firstName":"Andre",
+    "lastName":"Green",
+    "email":"andre@gruew.com",
+    "phone":"510.717.1635",
+    "experience":"0"
+  },
+  {
+    "firstName":"Steven",
+    "lastName":"Duval",
+    "email":"steven@gruew.com",
+    "phone":"510.717.1635",
+    "experience":"3"
+  },
+  {
+    "firstName":"Dan",
+    "lastName":"Alcorn",
+    "email":"dan@gruew.com",
+    "phone":"209.717.1635",
+    "experience":"2"
+  },
+  {
+    "firstName":"Dustin",
+    "lastName":"Vo",
+    "email":"dustin@gruew.com",
+    "phone":"619.717.1635",
+    "experience":"1"
+  },
+  {
+    "firstName":"Laura",
+    "lastName":"Lawson",
+    "email":"laura@gruew.com",
+    "phone":"210.717.1635",
+    "experience":"0"
+  }
+]
