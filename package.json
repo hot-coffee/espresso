@@ -24,7 +24,7 @@
     "express": "^4.13.3",
     "jsonfile": "^2.2.3",
     "mongodb": "^2.0.46",
-    "nodemon": "^1.8.0",
+    "nodemon": "^1.8.1",
     "underscore": "^1.8.3"
   }
 }
