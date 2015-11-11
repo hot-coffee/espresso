@@ -1,33 +1,48 @@
 'use strict';
 
-var DbHandler = require('./db-handler');
+var RecordFetcher = require('./record-fetcher');
 var Logger = require('./logger');
+var Config = require('./config');
+var RequestResponse = require('./request-response');
 
 function RequestHandler() {
     this.insertClient = function(req, res) {
         Logger.log('Headers:' + JSON.stringify(req.headers), __filename, false, false);
         Logger.log('Incoming data: '+ JSON.stringify(req.body), __filename, false, false);
         var data = req.body;
-        var dbHandler = new DbHandler();
-        dbHandler.insert('clients', [data], function(result) {
-            var message = !!result ? "It's Steven's world!!" :
-                "Dude, couldn't insert that object...Bummer";
-            res.send(JSON.stringify(message));
-        });
+
+
+        //TODO - Make Endpoint to handle insertion of data on data server
     };
 
     this.getAllClients = function (req, res) {
-        var dbHandler = new DbHandler();
-        dbHandler.retrieveAll('clients', function (result) {
-            res.send(JSON.stringify(result));
+        var recordFetcher = new RecordFetcher(
+            'camplight',
+            'clients',
+            Config.fetchOptions.fetchAll,
+            null
+        );
+
+        recordFetcher.fetch(function (error, responseObject) {
+            var requestResponse = new RequestResponse(error, responseObject, res);
+            requestResponse.respond();
         });
+
     };
 
     this.getClient = function (req, res) {
-        var dbHandler = new DbHandler();
+        //TODO - Add error handling if req.params.cleintId does not exist
         var id = req.params.clientId;
-        dbHandler.retrieveWithId('clients', id, function (result) {
-            res.send(JSON.stringify(result));
+        var recordFetcher = new RecordFetcher(
+            'camplight',
+            'clients',
+            Config.fetchOptions.fetchByIds,
+            [id]
+        );
+
+        recordFetcher.fetch(function (error, responseObject) {
+            var requestResponse = new RequestResponse(error, responseObject, res);
+            requestResponse.respond();
         });
     };
 }

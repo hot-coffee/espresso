@@ -5,8 +5,10 @@ var Logger = require('./logger');
 var RequestHandler = require('./request-handler');
 var cors = require('cors');
 var bodyParser = require('body-parser');
-var DbHandler = require('./db-handler');
+var RecordFetcher = require('./record-fetcher');
+var RecordSaver = require('./record-saver');
 var jsonFile = require('jsonfile');
+var Config = require('./config');
 
 function app() {
     this.run = function () {
@@ -15,22 +17,43 @@ function app() {
         } else if (process.argv.length > 2 && process.argv[2] === 'single') {
             Logger.log('Running get client', __filename, false, false);
             var _id = '562ff7962544df3398d49638';
-            var dbHandler = new DbHandler();
-            dbHandler.retrieveWithId('clients', _id, function (result) {
-                console.log('retrieved client:', result);
+            var recordFetcher = new RecordFetcher(
+                'camplight',
+                'clients',
+                Config.fetchOptions.fetchByIds,
+                [_id]
+            );
+
+            recordFetcher.fetch(function (error, result) {
+                if (error) {
+                    Logger.log('Fetching client with id: ' +  _id, __filename, true, false);
+                    return;
+                }
+
+                Logger.log('Successfully fetched client with id: ' + _id, __filename, false, false);
             });
         } else if (process.argv.length > 2 && process.argv[2] === 'all') {
-            Logger.log('Running get client', __filename, false, false);
-            var dbHandler = new DbHandler();
-            dbHandler.retrieveAll('clients', function (result) {
-                console.log('retrieved clients:', result);
-            });
-        } else if (process.argv.length > 2 && process.argv[2] === 'populatedb') {
-            Logger.log('Populating db with demo data', __filename, false, false);
-            var clients = jsonFile.readFileSync('../files/create-clients.json');
-            var dbHandler = new DbHandler();
-            dbHandler.insert('clients', clients, function (result) {
-                console.log('retrieved clients:', result);
+            Logger.log('Running get clients', __filename, false, false);
+
+            var recordFetcher = new RecordFetcher(
+                'camplight',
+                'clients',
+                Config.fetchOptions.fetchAll,
+                null
+            );
+
+            recordFetcher.fetch(function (error, result) {
+                if (error) {
+                    Logger.log('Fetching all clients: ', __filename, true, false);
+                    return;
+                }
+
+                Logger.log(
+                    'Successfully fetched all clients: ' + JSON.stringify(result),
+                    __filename,
+                    false,
+                    false
+                );
             });
         } else {
             this.startServer();
@@ -48,7 +71,7 @@ function app() {
         expApp.get('/all-clients', requestHandler.getAllClients);
         expApp.get('/get-client', requestHandler.getClient);
 
-        var server = expApp.listen(9042, function() {
+        var server = expApp.listen(Config.portNumber, function() {
             var host = server.address().address;
             var port = server.address().port;
 
